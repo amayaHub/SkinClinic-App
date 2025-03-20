@@ -1,4 +1,4 @@
-# github-jngk7zyc
+# skinclinic
 
 ## Feel free to delete this file and replace it with your own content.
 

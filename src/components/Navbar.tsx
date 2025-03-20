@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Menu, X, User, LogOut, Calendar, Settings } from 'lucide-react';
 import { useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from './Button';
 import { useAuth } from '../contexts/AuthContext';
 import { useAdmin } from '../hooks/useAdmin';
@@ -11,9 +11,11 @@ export function Navbar() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { user, signOut } = useAuth();
   const { isAdmin } = useAdmin();
+  const location = useLocation();
   const navigate = useNavigate();
   const closeMenu = () => setIsMenuOpen(false);
   const closeProfileMenu = () => setIsProfileOpen(false);
+  const isServicesPage = location.pathname === '/services';
 
   const handleSignOut = useCallback(async () => {
     try {
@@ -31,7 +33,12 @@ export function Navbar() {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link to="/" className="flex-shrink-0 flex items-center">
-              <span className="text-2xl font-semibold text-rose-300">ClínicaFacial</span>
+              <span className="text-2xl font-semibold">
+                <span className="text-rose-300">skin</span>
+                <span className="text-rose-300">klinik</span>
+                <span className="text-neutral-900"> Med.</span>
+                <span className="text-rose-300">Spa</span>
+              </span>
             </Link>
           </div>
 
@@ -104,9 +111,11 @@ export function Navbar() {
                 <Button as={Link} to="/login" variant="outline">
                   Iniciar Sesión
                 </Button>
-                <Button as={Link} to="/book" variant="primary">
-                  Reservar Cita
-                </Button>
+                {!isServicesPage && (
+                  <Button as={Link} to="/services" variant="primary">
+                    Reservar Cita
+                  </Button>
+                )}
               </div>
             )}
           </div>
@@ -203,15 +212,17 @@ export function Navbar() {
                 >
                   Iniciar Sesión
                 </Button>
-                <Button
-                  as={Link}
-                  to="/book"
-                  variant="primary"
-                  className="w-full"
-                  onClick={closeMenu}
-                >
-                  Reservar Cita
-                </Button>
+                {!isServicesPage && (
+                  <Button
+                    as={Link}
+                    to="/services"
+                    variant="primary"
+                    className="w-full"
+                    onClick={closeMenu}
+                  >
+                    Reservar Cita
+                  </Button>
+                )}
               </div>
             )}
           </div>

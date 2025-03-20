@@ -4,6 +4,11 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { AdminRoute } from './components/AdminRoute';
 import { Home } from './pages/Home';
 import { Services } from './pages/Services';
+import { Footer } from './components/Footer';
+import { About } from './pages/About';
+import { Privacy } from './pages/Privacy';
+import { Terms } from './pages/Terms';
+import { Contact } from './pages/Contact';
 import { Book } from './pages/Book';
 import { Profile } from './pages/Profile';
 import { Appointments } from './pages/Appointments';
@@ -22,6 +27,10 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/services" element={<Services />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route
@@ -63,6 +72,7 @@ function App() {
             />
           </Routes>
       </main>
+      <Footer />
     </div>
   );
 }

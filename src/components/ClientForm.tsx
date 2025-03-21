@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { Button } from './Button';
 import { Loader2, Mail, Phone, User, Lock, CheckCircle } from 'lucide-react';
+import { calculateAge } from '../lib/utils';
 
 interface ClientFormProps {
   onClose: () => void;
@@ -16,8 +17,8 @@ export function ClientForm({ onClose, onSuccess }: ClientFormProps) {
     full_name: '',
     email: '',
     phone: '',
-    age: '',
     password: '',
+    birth_date: ''
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -39,7 +40,8 @@ export function ClientForm({ onClose, onSuccess }: ClientFormProps) {
         .update({ 
           full_name: formData.full_name,
           phone: formData.phone,
-          age: formData.age ? parseInt(formData.age) : null
+          age: formData.birth_date ? calculateAge(formData.birth_date) : null,
+          birth_date: formData.birth_date || null
         })
         .eq('id', user.id);
 
@@ -168,19 +170,17 @@ export function ClientForm({ onClose, onSuccess }: ClientFormProps) {
         </div>
 
         <div>
-          <label htmlFor="age" className="block text-sm font-medium text-neutral-700">
-            Edad
+          <label htmlFor="birth_date" className="block text-sm font-medium text-neutral-700">
+            Fecha de nacimiento *
           </label>
           <div>
             <input
-              type="number"
-              id="age"
-              value={formData.age}
-              onChange={(e) => setFormData({ ...formData, age: e.target.value })}
+              type="date"
+              id="birth_date"
+              value={formData.birth_date}
+              onChange={(e) => setFormData({ ...formData, birth_date: e.target.value })}
               className="block w-full px-3 py-1.5 border border-neutral-300 rounded-md text-neutral-900 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-rose-200 focus:border-transparent text-sm"
-              placeholder="Edad"
-              min="18"
-              max="120"
+              required
             />
           </div>
           <p className="text-xs text-neutral-500 mt-0.5">Debes ser mayor de 18 años</p>

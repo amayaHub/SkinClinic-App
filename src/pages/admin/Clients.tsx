@@ -8,6 +8,7 @@ import { Button } from '../../components/Button';
 import { Dialog } from '../../components/Dialog';
 import { ClientForm } from '../../components/ClientForm';
 import { cn } from '../../lib/utils';
+import { calculateAge } from '../../lib/utils';
 
 interface Profile {
   id: string;
@@ -16,6 +17,7 @@ interface Profile {
   phone: string | null;
   created_at: string;
   age: number | null;
+  birth_date: string | null;
   appointments: {
     id: string;
     scheduled_for: string;
@@ -200,6 +202,7 @@ export function Clients() {
                   <th className="px-4 py-3 text-left text-sm font-medium text-neutral-900">Nombre</th>
                   <th className="px-4 py-3 text-left text-sm font-medium text-neutral-900">Email</th>
                   <th className="px-4 py-3 text-left text-sm font-medium text-neutral-900">Teléfono</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium text-neutral-900">Fecha de Nacimiento</th>
                   <th className="px-4 py-3 text-left text-sm font-medium text-neutral-900">Edad</th>
                   <th className="px-4 py-3 text-left text-sm font-medium text-neutral-900">Cliente desde</th>
                   <th className="px-4 py-3 text-left text-sm font-medium text-neutral-900">Citas</th>
@@ -308,15 +311,13 @@ export function Clients() {
                       )}
                     </td>
                     <td className="px-4 py-3">
-                      {editingCell?.id === profile.id && editingCell.field === 'age' ? (
+                      {editingCell?.id === profile.id && editingCell.field === 'birth_date' ? (
                         <div className="flex items-center gap-2">
                           <input
-                            type="number"
-                            min="18"
-                            max="120"
+                            type="date"
                             value={editValue}
                             onChange={e => setEditValue(e.target.value)}
-                            className="flex-1 px-2 py-1 border rounded w-20"
+                            className="flex-1 px-2 py-1 border rounded"
                             autoFocus
                           />
                           <button
@@ -335,12 +336,15 @@ export function Clients() {
                         </div>
                       ) : (
                         <button
-                          onClick={() => handleEdit(profile, 'age')}
+                          onClick={() => handleEdit(profile, 'birth_date')}
                           className="w-full text-left hover:text-rose-600"
                         >
-                          {profile.age || 'No especificado'}
+                          {profile.birth_date ? format(new Date(profile.birth_date), 'dd/MM/yyyy') : 'No especificada'}
                         </button>
                       )}
+                    </td>
+                    <td className="px-4 py-3">
+                      {profile.birth_date ? calculateAge(profile.birth_date) : 'No disponible'}
                     </td>
                     <td className="px-4 py-3 text-neutral-600">
                       {format(new Date(profile.created_at), 'MMMM yyyy', { locale: es })}

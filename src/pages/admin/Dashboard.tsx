@@ -32,6 +32,7 @@ interface DashboardStats {
   totalConfirmed: number;
   totalPending: number;
   totalCancelled: number;
+  totalClosed: number;
   dailyStats: {
     date: string;
     confirmed: number;
@@ -45,6 +46,7 @@ export function AdminDashboard() {
     totalConfirmed: 0,
     totalPending: 0,
     totalCancelled: 0,
+    totalClosed: 0,
     dailyStats: []
   });
   const [loading, setLoading] = useState(true);
@@ -68,6 +70,7 @@ export function AdminDashboard() {
         const totalConfirmed = appointments?.filter(a => a.status === 'confirmed').length || 0;
         const totalPending = appointments?.filter(a => a.status === 'pending').length || 0;
         const totalCancelled = appointments?.filter(a => a.status === 'cancelled').length || 0;
+        const totalClosed = appointments?.filter(a => a.closed === true).length || 0;
 
         // Calculate daily stats
         const days = eachDayOfInterval({ start: startDate, end: endDate });
@@ -87,6 +90,7 @@ export function AdminDashboard() {
           totalConfirmed,
           totalPending,
           totalCancelled,
+          totalClosed,
           dailyStats
         });
       } catch (err) {
@@ -250,7 +254,7 @@ export function AdminDashboard() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-3 mb-8">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
           <div className="bg-green-50 rounded-lg shadow-sm p-6">
             <div>
               <h3 className="text-lg font-medium text-green-800">Citas Confirmadas</h3>
@@ -269,6 +273,13 @@ export function AdminDashboard() {
             <div>
               <h3 className="text-lg font-medium text-red-800">Canceladas</h3>
               <p className="mt-6 text-5xl font-bold text-red-700">{stats.totalCancelled}</p>
+            </div>
+          </div>
+
+          <div className="bg-blue-50 rounded-lg shadow-sm p-6">
+            <div>
+              <h3 className="text-lg font-medium text-blue-800">Cerradas</h3>
+              <p className="mt-6 text-5xl font-bold text-blue-700">{stats.totalClosed}</p>
             </div>
           </div>
         </div>

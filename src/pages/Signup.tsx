@@ -2,13 +2,12 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '../components/Button';
-import { Mail, Lock, User, Loader2, Chrome } from 'lucide-react';
+import { Mail, Lock, Loader2, Chrome } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
 export function Signup() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
@@ -39,13 +38,6 @@ export function Signup() {
       
       if (signUpError) throw signUpError;
       if (!user?.id) throw new Error('No user ID returned after signup');
-      
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .update({ full_name: fullName })
-        .eq('id', user.id);
-
-      if (profileError) throw profileError;
 
       navigate('/login', { 
         state: { showConfirmation: true }
@@ -70,26 +62,6 @@ export function Signup() {
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
           <div className="space-y-4">
-            <div>
-              <label htmlFor="fullName" className="block text-sm font-medium text-neutral-700">
-                Nombre completo
-              </label>
-              <div className="mt-1 relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="h-5 w-5 text-neutral-400" />
-                </div>
-                <input
-                  id="fullName"
-                  type="text"
-                  required
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-2 border border-neutral-300 rounded-md text-neutral-900 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-rose-200 focus:border-transparent"
-                  placeholder="John Doe"
-                />
-              </div>
-            </div>
-
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-neutral-700">
                 Correo electrónico

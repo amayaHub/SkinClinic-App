@@ -100,11 +100,6 @@ export function Footer() {
             </ul>
           </div>
         </div>
-
-        {/* Payment Methods */}
-        <div className="flex justify-center gap-4 mb-8">
-          <img src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/cc-badges-ppmcvdam.png" alt="Payment Methods" className="h-8" />
-        </div>
       </div>
     </footer>
   );

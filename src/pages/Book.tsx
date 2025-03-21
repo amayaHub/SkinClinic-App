@@ -8,17 +8,13 @@ import { useServices } from '../hooks/useServices';
 import { useAuth } from '../contexts/AuthContext';
 import { Dialog } from '../components/Dialog';
 import { supabase } from '../lib/supabase';
-import { useAppointments } from '../hooks/useAppointments'; 
+import { useAppointments } from '../hooks/useAppointments';
 import { CheckCircle } from 'lucide-react';
 
 export function Book() {
   const [searchParams] = useSearchParams();
   const serviceId = parseInt(searchParams.get('service') || '1', 10);
   const { services, loading: loadingServices } = useServices();
-  const { appointments } = useAppointments();
-  const service = services.find(s => s.id === serviceId);
-  const [showSuccess, setShowSuccess] = useState(false);
-
   const { user } = useAuth();
   const navigate = useNavigate();
   
@@ -26,6 +22,10 @@ export function Book() {
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  const { appointments } = useAppointments(selectedDate, false);
+  const service = services.find(s => s.id === serviceId);
 
   const handleBooking = async () => {
     if (!user || !selectedDate || !selectedTime) return;
@@ -43,7 +43,8 @@ export function Book() {
       const appointmentDateTime = new Date(scheduledFor);
       const isTimeBooked = appointments.some(appointment => {
         const bookedTime = new Date(appointment.scheduled_for);
-        return bookedTime.getTime() === appointmentDateTime.getTime();
+        return bookedTime.getTime() === appointmentDateTime.getTime() && 
+               (appointment.status === 'pending' || appointment.status === 'confirmed');
       });
 
       if (isTimeBooked) {
@@ -75,7 +76,7 @@ export function Book() {
       <div className="min-h-screen bg-neutral-50 py-12">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white rounded-lg shadow-sm p-6">
-            <p className="text-neutral-600">Service not found.</p>
+            <p className="text-neutral-600">Servicio no encontrado.</p>
           </div>
         </div>
       </div>
@@ -91,21 +92,21 @@ export function Book() {
           </div>
         ) : !service ? (
           <div className="bg-white rounded-lg shadow-sm p-6">
-            <p className="text-neutral-600">Service not found.</p>
+            <p className="text-neutral-600">Servicio no encontrado.</p>
           </div>
         ) : (
           <div className="bg-white rounded-lg shadow-sm p-6">
           <div className="mb-8">
-            <h1 className="text-2xl font-bold text-neutral-900">Book Appointment</h1>
+            <h1 className="text-2xl font-bold text-neutral-900">Reservar Cita</h1>
             <p className="mt-2 text-neutral-600">
-              Selected service: <span className="font-medium">{service.name}</span>
+              Servicio seleccionado: <span className="font-medium">{service.name}</span>
             </p>
           </div>
 
           <div className="space-y-8">
             <div>
               <h2 className="text-lg font-semibold text-neutral-900 mb-4">
-                Select Date
+                Seleccionar Fecha
               </h2>
               <Calendar
                 selectedDate={selectedDate}
@@ -116,7 +117,7 @@ export function Book() {
             {selectedDate && (
               <div>
                 <h2 className="text-lg font-semibold text-neutral-900 mb-4">
-                  Select Time
+                  Seleccionar Hora
                 </h2>
                 <TimeSlots
                   selectedDate={selectedDate}
@@ -138,7 +139,7 @@ export function Book() {
                 disabled={!selectedDate || !selectedTime || loading}
                 className="w-full sm:w-auto"
               >
-                {loading ? 'Booking...' : 'Confirm Booking'}
+                {loading ? 'Reservando...' : 'Confirmar Reserva'}
               </Button>
             </div>
           </div>

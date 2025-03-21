@@ -11,7 +11,9 @@ import {
   isToday,
   isBefore,
   startOfDay,
+  getDay,
 } from 'date-fns';
+import { es } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from './Button';
 import { cn } from '../lib/utils';
@@ -30,6 +32,9 @@ export function Calendar({ selectedDate, onDateSelect }: CalendarProps) {
   const today = new Date();
 
   const isDateSelectable = (date: Date) => {
+    const dayOfWeek = getDay(date);
+    // 0 es domingo, 6 es sábado
+    if (dayOfWeek === 0) return false; // Bloquear domingos
     return !isBefore(date, startOfDay(today));
   };
 
@@ -44,7 +49,7 @@ export function Calendar({ selectedDate, onDateSelect }: CalendarProps) {
           <ChevronLeft className="h-4 w-4" />
         </Button>
         <h2 className="text-lg font-semibold">
-          {format(currentMonth, 'MMMM yyyy')}
+          {format(currentMonth, 'MMMM yyyy', { locale: es })}
         </h2>
         <Button
           variant="outline"
@@ -56,7 +61,7 @@ export function Calendar({ selectedDate, onDateSelect }: CalendarProps) {
       </div>
 
       <div className="grid grid-cols-7 gap-1 text-center text-sm mb-2">
-        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+        {['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'].map(day => (
           <div key={day} className="py-2 font-medium text-neutral-600">
             {day}
           </div>
@@ -85,7 +90,8 @@ export function Calendar({ selectedDate, onDateSelect }: CalendarProps) {
                 !isCurrentMonth && 'text-neutral-300',
                 isSelected && 'bg-rose-100 text-rose-900',
                 dayIsToday && 'font-bold',
-                !selectable && 'cursor-not-allowed opacity-50 hover:bg-transparent'
+                !selectable && 'cursor-not-allowed opacity-50 hover:bg-transparent',
+                getDay(day) === 0 && 'bg-neutral-100' // Estilo especial para domingos
               )}
             >
               <time dateTime={format(day, 'yyyy-MM-dd')}>

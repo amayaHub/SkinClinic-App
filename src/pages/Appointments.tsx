@@ -14,15 +14,27 @@ export function Appointments() {
   const { services } = useServices();
   const [cancellingId, setCancellingId] = useState<string | null>(null);
 
-  const upcomingAppointments = appointments.filter(
-    app => !isPast(new Date(app.scheduled_for)) || isToday(new Date(app.scheduled_for))
-  ).sort((a, b) => 
+  const upcomingAppointments = appointments.filter(app => {
+    const appointmentDate = new Date(app.scheduled_for);
+    // Si la cita es para hoy, verificar si ya pasó la hora
+    if (isToday(appointmentDate)) {
+      return appointmentDate.getTime() > new Date().getTime();
+    }
+    // Si no es para hoy, verificar si es una fecha futura
+    return !isPast(appointmentDate);
+  }).sort((a, b) => 
     new Date(a.scheduled_for).getTime() - new Date(b.scheduled_for).getTime()
   );
 
-  const pastAppointments = appointments.filter(
-    app => isPast(new Date(app.scheduled_for)) && !isToday(new Date(app.scheduled_for))
-  ).sort((a, b) => 
+  const pastAppointments = appointments.filter(app => {
+    const appointmentDate = new Date(app.scheduled_for);
+    // Si la cita es para hoy, verificar si ya pasó la hora
+    if (isToday(appointmentDate)) {
+      return appointmentDate.getTime() <= new Date().getTime();
+    }
+    // Si no es para hoy, verificar si es una fecha pasada
+    return isPast(appointmentDate);
+  }).sort((a, b) => 
     new Date(b.scheduled_for).getTime() - new Date(a.scheduled_for).getTime()
   );
 

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Menu, X, User, LogOut, Calendar, Settings } from 'lucide-react';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from './Button';
 import { useAuth } from '../contexts/AuthContext';
@@ -9,6 +9,8 @@ import { useAdmin } from '../hooks/useAdmin';
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
+  const profileButtonRef = useRef<HTMLButtonElement>(null);
   const { user, signOut } = useAuth();
   const { isAdmin } = useAdmin();
   const location = useLocation();
@@ -16,6 +18,21 @@ export function Navbar() {
   const closeMenu = () => setIsMenuOpen(false);
   const closeProfileMenu = () => setIsProfileOpen(false);
   const isServicesPage = location.pathname === '/services';
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        profileMenuRef.current &&
+        !profileMenuRef.current.contains(event.target as Node) &&
+        !profileButtonRef.current?.contains(event.target as Node)
+      ) {
+        setIsProfileOpen(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleSignOut = useCallback(async () => {
     try {
@@ -55,6 +72,7 @@ export function Navbar() {
             {user ? (
               <div className="relative">
                 <Button
+                  ref={profileButtonRef}
                   variant="outline"
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
                   className="flex items-center gap-2"
@@ -63,7 +81,10 @@ export function Navbar() {
                   Perfil
                 </Button>
                 {isProfileOpen && (
-                  <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+                  <div 
+                    ref={profileMenuRef}
+                    className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50"
+                  >
                     <div className="py-1">
                       {!isAdmin && (
                         <Button
@@ -71,7 +92,7 @@ export function Navbar() {
                           to="/appointments"
                           variant="secondary"
                           className="w-full justify-start rounded-none px-4 py-2 text-left"
-                          onClick={() => setIsProfileOpen(false)}
+                          onClick={closeProfileMenu}
                         >
                           <Calendar className="h-5 w-5 mr-2" />
                           Mis Citas
@@ -80,7 +101,7 @@ export function Navbar() {
                       <Link
                         to="/profile"
                         className="w-full px-4 py-2 text-left text-neutral-700 hover:bg-neutral-100 flex items-center gap-2"
-                        onClick={() => setIsProfileOpen(false)}
+                        onClick={closeProfileMenu}
                       >
                         <User className="h-5 w-5" />
                         Mi Perfil
@@ -89,7 +110,7 @@ export function Navbar() {
                         <Link
                           to="/admin"
                           className="w-full px-4 py-2 text-left text-neutral-700 hover:bg-neutral-100 flex items-center gap-2"
-                          onClick={() => setIsProfileOpen(false)}
+                          onClick={closeProfileMenu}
                         >
                           <Settings className="h-5 w-5" />
                           Panel Admin

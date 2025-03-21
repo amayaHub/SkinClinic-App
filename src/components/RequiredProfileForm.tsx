@@ -3,6 +3,7 @@ import { User, Phone } from 'lucide-react';
 import { Button } from './Button';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
+import { calculateAge } from '../lib/utils';
 
 interface RequiredProfileFormProps {
   onClose: () => void;
@@ -11,7 +12,7 @@ interface RequiredProfileFormProps {
 export function RequiredProfileForm({ onClose }: RequiredProfileFormProps) {
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
-  const [age, setAge] = useState('');
+  const [birthDate, setBirthDate] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
@@ -36,7 +37,8 @@ export function RequiredProfileForm({ onClose }: RequiredProfileFormProps) {
         .update({
           full_name: fullName,
           phone,
-          age: parseInt(age),
+          age: birthDate ? calculateAge(birthDate) : null,
+          birth_date: birthDate || null,
           updated_at: new Date().toISOString(),
         })
         .eq('id', user.id);
@@ -83,20 +85,17 @@ export function RequiredProfileForm({ onClose }: RequiredProfileFormProps) {
           </div>
 
           <div>
-            <label htmlFor="age" className="block text-sm font-medium text-neutral-700">
-              Edad *
+            <label htmlFor="birthDate" className="block text-sm font-medium text-neutral-700">
+              Fecha de nacimiento *
             </label>
             <div className="mt-1">
               <input
-                id="age"
-                type="number"
-                min="18"
-                max="120"
+                id="birthDate"
+                type="date"
                 required
-                value={age}
-                onChange={(e) => setAge(e.target.value)}
+                value={birthDate}
+                onChange={(e) => setBirthDate(e.target.value)}
                 className="block w-full px-3 py-2 border border-neutral-300 rounded-md text-neutral-900 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-rose-200 focus:border-transparent"
-                placeholder="Tu edad"
               />
             </div>
             <p className="mt-1 text-sm text-neutral-500">

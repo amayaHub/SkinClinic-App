@@ -10,7 +10,8 @@ export function Login() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
-  const { signIn, signInWithGoogle } = useAuth();
+  const [resetEmailSent, setResetEmailSent] = useState(false);
+  const { signIn, signInWithGoogle, resetPassword } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const showConfirmation = location.state?.showConfirmation;
@@ -32,6 +33,26 @@ export function Login() {
     }
   };
 
+  const handlePasswordReset = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!email) {
+      setError('Por favor ingresa tu correo electrónico');
+      return;
+    }
+
+    setError(null);
+    setLoading(true);
+
+    try {
+      await resetPassword(email);
+      setResetEmailSent(true);
+    } catch (err) {
+      setError('Error al enviar el correo de recuperación');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleGoogleSignIn = async () => {
     setError(null);
     setGoogleLoading(true);
@@ -44,8 +65,8 @@ export function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full">
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8">
         {showConfirmation && (
           <div className="mb-12 text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-rose-50 mb-6">
@@ -90,9 +111,17 @@ export function Login() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-neutral-700">
-                Contraseña
-              </label>
+              <div className="flex items-center justify-between">
+                <label htmlFor="password" className="block text-sm font-medium text-neutral-700">
+                  Contraseña
+                </label>
+                <button
+                  onClick={handlePasswordReset}
+                  className="text-sm font-medium text-rose-300 hover:text-rose-400"
+                >
+                  ¿Olvidaste tu contraseña?
+                </button>
+              </div>
               <div className="mt-1 relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Lock className="h-5 w-5 text-neutral-400" />
@@ -113,6 +142,12 @@ export function Login() {
           {error && (
             <div className="text-sm text-red-600">
               {error}
+            </div>
+          )}
+
+          {resetEmailSent && (
+            <div className="text-sm text-emerald-600">
+              Te hemos enviado un correo con las instrucciones para restablecer tu contraseña
             </div>
           )}
 

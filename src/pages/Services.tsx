@@ -85,15 +85,8 @@ export function Services() {
           onClose={() => setSelectedService(null)}
         >
           {selectedService && (
-            <div className="p-6">
-              <div className="aspect-[16/9] relative rounded-lg overflow-hidden">
-                <img
-                  src={selectedService.image}
-                  alt={selectedService.name}
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-              </div>
-              <div className="mt-6">
+            <div className="flex flex-col max-h-[80vh]">
+              <div className="p-6 flex-1 overflow-y-auto">
                 <h2 className="text-2xl font-bold text-neutral-900">{selectedService.name}</h2>
                 <div className="mt-2 flex items-center gap-4 text-neutral-600">
                   <div className="flex items-center gap-1">
@@ -119,10 +112,12 @@ export function Services() {
                     ))}
                   </ul>
                 </div>
+              </div>
+              <div className="p-4 border-t bg-white sticky bottom-0">
                 <Button
                   as={Link}
                   to={`/book?service=${selectedService.id}`}
-                  className="mt-8 w-full sm:w-auto"
+                  className="w-full sm:w-auto"
                 >
                   Reservar Este Tratamiento
                 </Button>

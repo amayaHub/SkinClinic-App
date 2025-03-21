@@ -1,11 +1,43 @@
-# skinclinic
+# SkinClinic App
 
-## Feel free to delete this file and replace it with your own content.
+Aplicación web para la gestión de citas y servicios de una clínica estética.
 
-## Repository Initialization Notice
+## Características
 
-This repository was automatically initialized by the Bolt to GitHub extension.
+- Gestión de citas
+- Perfil de usuario
+- Panel de administración
+- Catálogo de servicios
+- Sistema de autenticación
+- Recuperación de contraseña
 
-**Auto-Generated Repository**
-- Created to ensure a valid Git repository structure
-- Serves as an initial commit point for your project
+## Tecnologías
+
+- React
+- TypeScript
+- Tailwind CSS
+- Supabase
+- Vite
+
+## Instalación
+
+1. Clonar el repositorio
+```bash
+git clone https://github.com/amayaHub/SkinClinic-App.git
+```
+
+2. Instalar dependencias
+```bash
+cd SkinClinic-App
+npm install
+```
+
+3. Configurar variables de entorno
+```bash
+cp .env.example .env
+```
+
+4. Iniciar el servidor de desarrollo
+```bash
+npm run dev
+```
